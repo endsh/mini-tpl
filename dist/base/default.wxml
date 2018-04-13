@@ -1,0 +1,6 @@
+<import src="/base/common/index.wxml" />
+<template is="common" data="{{ login, load, error, hiddenBackIndex: true, zanToast, images }}" />
+
+<view class="main" hidden="{{ load != 'success' || load == 'reloading' }}">
+  
+</view>

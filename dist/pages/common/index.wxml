@@ -1,0 +1,53 @@
+<!--pages/common/index.wxml-->
+<import src="/base/common/index.wxml" />
+<template is="common" data="{{ login, load, error, hiddenBackIndex: true, zanToast, images }}" />
+
+<view class="main" hidden="{{ load != 'success' || load == 'reloading' }}">
+  <swiper class="swiper-box" indicator-dots="true" autoplay="true" interval="5000" duration="1000" style="height:{{ slideHeight }}px">
+    <block wx:for="{{ slides }}" wx:key="link">
+      <swiper-item>
+        <navigator url="{{ item.link }}">
+          <image src="{{ images[keys[item.image]].link }}" class="slide-image" style="height:{{ slideHeight }}px" bindload="onImageLoad" />
+        </navigator>
+      </swiper-item>
+    </block>
+  </swiper>
+
+  <view class="nav-grids weui-grids">
+    <block wx:for="{{ navs }}" wx:key="image">
+      <navigator url="{{ item.link }}" class="weui-grid" hover-class="weui-grid_active">
+        <image class="weui-grid__icon" src="{{ images[keys[item.image]].link }}" />
+        <view class="weui-grid__label">{{ item.name }}</view>
+      </navigator>
+    </block>
+  </view>
+
+  <view class="index-goods2">
+    <block wx:for="{{ items }}" wx:key="id">
+      <navigator url="/pages/goods/item?id={{ item.id }}" class="good">
+        <!-- <image class="cover" src="{{ item.cover_small }}" /> -->
+        <image mode="widthFix" class="cover" src="{{ images[keys[item.cover]].link }}" />
+        <view class='detail' style='width:100%;'>
+          <view class="name" style='height:46px;'>{{ item.name }}</view>
+          <view class='sales' wx:if="{{ item.sales > 0 }}">已团<text class='price'>{{ item.sales_text }}</text>件</view>
+          <view class='sales' wx:if="{{ item.sales == 0 }}">新品上市</view>
+          <view class='origin'>单独购买<text class='price'>￥{{ item.origin_text }}</text></view>
+
+          <view class='sales-price'>
+            <view class='group'><text><text class='num'>{{ item.group }}人团</text>￥<text class='price'>{{ item.price_text }}</text></text></view>
+            <view class='pin-btn-group'>
+              <button class='weui-btn item-btn' type="warn" size='mini'>去拼团 
+                <image src='../../images/order/right-arrow.png' class='more'></image>
+              </button>
+            </view>
+          </view>
+        </view>
+      </navigator>
+    </block>
+  </view>
+  <template is="load-empty" data="{{ empty: load == 'success' && items.length == 0 }}" />
+  <template is="load-next" data="{{ load, next, loadNext }}" />
+  <view class="weui-loadmore weui-loadmore_line" wx:if="{{ !next && items.length > 0 }}">
+      <view class="weui-loadmore__tips weui-loadmore__tips_in-line draw-loading-no">没有更多的商品了...</view>
+  </view>
+</view>

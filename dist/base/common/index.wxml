@@ -1,0 +1,96 @@
+<template name="base">
+  <view class="weui-loadmore" hidden="{{ login != 'logining' }}">
+    <view class="weui-loading"></view>
+    <view class="weui-loadmore__tips">正在登陆中...</view>
+  </view>
+  <view class="weui-loadmore" hidden="{{ load != 'loading' }}">
+    <view class="weui-loading"></view>
+    <view class="weui-loadmore__tips">正在加载中...</view>
+  </view>
+  <view class="weui-msg" hidden="{{ login != 'fail' && load != 'fail' }}">
+    <view class="weui-msg__icon-area">
+       <!-- <icon type="warn" size="93" wx:if="{{ login == 'fail' }}"></icon>  -->
+      <image wx:if="{{ login == 'fail' }}" src="../../images/nothing/3@2x.png" class='err-image'></image>
+      <!-- <view wx:else class="iconfont icon-tubiaozhizuomoban" style="font-size: 48px;color: #888;"></view> -->
+      <image wx:else src="{{ error == 'network' ? '../../images/nothing/1&2@2x.png' : (login == 'fail' ? '../../images/nothing/3@2x.png' : '../../images/nothing/1&2@2x.png') }}" class='err-image'></image>
+    </view>
+    <view class="weui-msg__text-area">
+      <view class="weui-msg__desc">
+      {{ error == 'network' ? '手机网络不太顺畅，请稍后尝试' : (login == 'fail' ? '登陆失败,请稍后尝试' : '系统繁忙，请稍后尝试') }}
+      </view>
+    </view>
+    <view class="weui-msg__opr-area">
+        <view class="weui-btn-area">
+            <button id="retry-{{ id }}" class="weui-btn" size='mini' type="warn" bindtap="onRetry">
+            {{ login == 'fail' ? '重新登陆' : '重新加载' }}
+            </button>
+            <button id="retry-{{ id }}" class="weui-btn" type="default" bindtap="onReLaunch" hidden="{{ hiddenBackIndex }}">回到首页</button>
+        </view>
+    </view>
+  </view>
+</template>
+
+<template name="zan-toast">
+  <view class="zan-toast" wx:if="{{ zanToast.show }}" bindtap="clearZanToast">{{ zanToast.title }}</view>
+</template>
+
+<template name="img-loader">
+    <view class="lazy-images" style="height: 0; overflow: hidden;">
+      <image wx:for="{{ images }}" wx:key="src" src="{{ item.src }}" data-src="{{ item.src }}" bindload="_imgOnLoad" binderror="_imgOnLoadError" style="width:0;height:0;opacity:0;font-size:0;" />
+    </view>
+</template>
+
+<template name="load-next">
+  <view class="weui-loadmore" hidden="{{ load != 'success' || !next }}">
+    <view class="weui-loading" hidden="{{ loadNext == 'fail' }}"></view>
+    <view class="weui-loadmore__tips" hidden="{{ loadNext == 'fail' }}">
+      正在加载中...
+    </view>
+    <view class="weui-loadmore__tips" hidden="{{ loadNext != 'fail' }}" bindtap="loadNext">
+      加载失败，点击重新加载
+    </view>
+  </view>
+</template>
+
+<template name="load-empty">
+  <view class="empty-area" hidden="{{ !empty }}" style='{{ nHeight && "padding:" + (nHeight-14)+"px  0 " + nHeight+"px" }}'>
+     <!-- <view class="iconfont icon-none"></view>  -->
+    <image src='{{ nothingImage || "../../images/nothing/4&9@2x.png" }}' class='em-image' style="{{ marginLeft?'margin-left:20px':0 }}"></image> 
+    <view class="empty-label">{{ name ? name : '数据空空，什么也没有' }}</view>
+  </view>
+</template>
+
+<template name="common">
+  <template is="base" data="{{ login, load, error, hiddenBackIndex: true }}" />
+  <template is="zan-toast" data="{{ zanToast }}" />
+  <template is="img-loader" data="{{ images }}" />
+</template>
+
+<template name="rec-list">
+  <view class='guess-like-goods' wx:if="{{ titleFlag }}">
+    <image src='{{ titleImage || "../../images/guess/guess.png" }}' class='g-image'></image>
+    <view class='g-name'>{{ titleName || "猜你喜欢" }}</view>
+  </view>
+  <view class='draw-list search-draw-list' style='margin-bottom:{{ bottom }}px;'>
+    <block wx:for="{{ items }}" wx:key="id">
+      <navigator url="/pages/goods/item?id={{ item.id }}" style='width:{{ itemWidth }}px' class='draw-item'>
+         <image src="{{ images[keys[item.cover]].link }}" style='width:{{ itemWidth }}px;height:{{ itemWidth }}px' class='draw-item-cover'></image> 
+        <!-- <image src="{{ item.cover }}" style='width:{{ itemWidth }}px;height:{{ itemWidth }}px' class='draw-item-cover'></image> -->
+        <view class='text'>
+          <view class='draw-name'>{{ item.name }}</view>
+          <view class='draw-item-price'>
+            <text>￥<text class='draw-item-price_yuan'>{{ item.price_text }}</text></text>
+            <text class='draw-item-price_origin' wx:if="{{ item.sales > 0 }}">已团{{item.sales_text}}件</text>
+            <text class='draw-item-price_origin' wx:if="{{ item.sales == 0 }}">新品上市</text>
+          </view>
+        </view>
+      </navigator>  
+    </block> 
+
+    <template is="load-empty" data="{{ empty }}" />
+    <template is="load-next" data="{{ load, next, loadNext }}" />
+    <view class="weui-loadmore weui-loadmore_line" wx:if="{{ !next && items.length > 0 }}">
+      <view class="weui-loadmore__tips weui-loadmore__tips_in-line draw-loading-no">已经到底部了</view>
+    </view>
+  </view>
+</template>

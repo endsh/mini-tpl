@@ -1,0 +1,7 @@
+@import "libs/weui.wxss";
+@import "base/reset.wxss";
+
+@import "../../dist/base/toast/index.wxss";
+@import "../../dist/base/tab/index.wxss";
+
+@import "common.wxss";

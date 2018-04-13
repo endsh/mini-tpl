@@ -1,0 +1,9 @@
+<!--pages/common/dev.wxml-->
+<view class="weui-msg">
+  <view class="weui-msg__icon-area">
+    <icon type="info" size="93"></icon>
+  </view>
+  <view class="weui-msg__text-area">
+    <view class="weui-msg__desc">此功能正在开发中...</view>
+  </view>
+</view>
